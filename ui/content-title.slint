@@ -1,0 +1,57 @@
+// 歌曲列表标题项
+export component ContentTitle {
+    Rectangle {
+        HorizontalLayout {
+            spacing: 5px;
+            alignment: space-between;
+            padding-left: 10px;
+            Rectangle {
+                width: 25%;
+                Text {
+                    width: 100%;
+                    horizontal-alignment: left;
+                    overflow: elide;
+                    color: blue;
+                    font-weight: 800;
+                    text: "Title";
+                }
+            }
+
+            Rectangle {
+                width: 20%;
+                Text {
+                    width: 100%;
+                    horizontal-alignment: left;
+                    overflow: elide;
+                    color: blue;
+                    font-weight: 800;
+                    text: "Artist";
+                }
+            }
+
+            Rectangle {
+                width: 25%;
+                Text {
+                    width: 100%;
+                    horizontal-alignment: left;
+                    overflow: elide;
+                    color: blue;
+                    font-weight: 800;
+                    text: "Album";
+                }
+            }
+
+            Rectangle {
+                width: 15%;
+                Text {
+                    width: 100%;
+                    horizontal-alignment: left;
+                    overflow: elide;
+                    color: blue;
+                    font-weight: 800;
+                    text: "Duration";
+                }
+            }
+        }
+    }
+}

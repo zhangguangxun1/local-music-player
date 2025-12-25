@@ -1,0 +1,117 @@
+import { ContentTitle } from "content-title.slint";
+import { ContentLine } from "content-line.slint";
+import { AudioMetadata, LyricLine } from "type.slint";
+import { ListView } from "std-widgets.slint";
+import { Info } from "info.slint";
+
+// 主体内容
+export component Content {
+    // 音乐文件列表
+    in property <[AudioMetadata]> music-list;
+    // 当前选中项索引
+    in-out property <int> selected-index;
+    // 主体窗口的显示和隐藏
+    in property <bool> content-visible: true;
+    // 详情窗口的显示和隐藏
+    in property <bool> info-visible: false;
+    // 当前播放状态
+    in property <bool> is-playing;
+    // 当前播放进度
+    in property <float> playback-progress;
+    // 歌词数据
+    in property <[LyricLine]> lyric-lines;
+    // 当前播放行
+    in property <int> current-line-index;
+    // 音乐信息
+    in property <AudioMetadata> audio-file;
+    // 列表循环播放
+    in property <bool> repeat-list: false;
+    // 列表乱序播放
+    in property <bool> shuffle-list: false;
+
+    // 选中歌曲播放
+    callback selected-item(int);
+    // 播放
+    callback pressed-play(int);
+    // 暂停
+    callback pressed-pause(int);
+    // 下一首
+    callback pressed-next(int);
+    // 上一首
+    callback pressed-prev(int);
+    // 列表重复
+    callback pressed-repeat-list(int);
+    // 乱序播放
+    callback pressed-shuffle-list(int);
+
+    Rectangle {
+        // 显示音乐详情
+        Rectangle {
+            visible: root.info-visible;
+            background: rgba(255, 0, 0, 0.1);
+            Info {
+                width: 100%;
+                height: 100%;
+                is-playing: root.is-playing;
+                playback-progress: root.playback-progress;
+                lyric-lines: root.lyric-lines;
+                current-line-index: root.current-line-index;
+                file: root.audio-file;
+                repeat-list: root.repeat-list;
+                shuffle-list: root.shuffle-list;
+                pressed-play(idx) => {
+                    root.pressed-play(idx)
+                }
+                pressed-pause(idx) => {
+                    root.pressed-pause(idx)
+                }
+                pressed-next(idx) => {
+                    root.pressed-next(idx)
+                }
+                pressed-prev(idx) => {
+                    root.pressed-prev(idx)
+                }
+                pressed-repeat-list(idx) => {
+                    root.pressed-repeat-list(idx)
+                }
+                pressed-shuffle-list(idx) => {
+                    root.pressed-shuffle-list(idx)
+                }
+            }
+        }
+
+        VerticalLayout {
+            visible: root.content-visible;
+            spacing: 5px;
+            padding-bottom: 10px;
+            ContentTitle {
+                height: 5%;
+            }
+
+            ListView {
+                for file[idx] in music-list: Rectangle {
+                    width: 100%;
+                    height: 5%;
+                    background: root.selected-index == idx ? pink : transparent;
+                    ContentLine {
+                        width: 100%;
+                        height: 5%;
+                        file: file;
+                    }
+
+                    // 定义鼠标单击区域
+                    TouchArea {
+                        clicked => {
+                            root.selected-index = idx;  // 选中这一行, 默认选中第一行
+                        }
+
+                        double-clicked => {
+                            root.selected-index = idx;
+                            root.selected-item(idx);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,53 @@
+import { AudioMetadata } from "type.slint";
+
+// 歌曲列表
+export component ContentLine {
+    // 音乐文件
+    in property <AudioMetadata> file;
+
+    HorizontalLayout {
+        spacing: 5px;
+        alignment: space-between;
+        padding-left: 10px;
+
+        Rectangle {
+            width: 25%;
+            Text {
+                width: 100%;
+                horizontal-alignment: left;
+                overflow: elide;
+                text: file.title;
+            }
+        }
+
+        Rectangle {
+            width: 20%;
+            Text {
+                width: 100%;
+                horizontal-alignment: left;
+                overflow: elide;
+                text: file.artist;
+            }
+        }
+
+        Rectangle {
+            width: 25%;
+            Text {
+                width: 100%;
+                horizontal-alignment: left;
+                overflow: elide;
+                text: file.album;
+            }
+        }
+
+        Rectangle {
+            width: 15%;
+            Text {
+                width: 100%;
+                horizontal-alignment: left;
+                overflow: elide;
+                text: file.duration-desc;
+            }
+        }
+    }
+}

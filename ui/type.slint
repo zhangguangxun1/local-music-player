@@ -1,0 +1,18 @@
+// 元数据类型定义
+
+// === 音乐文件元数据结构定义 ===
+export struct AudioMetadata {
+    index: int, // 歌曲索引
+    path: string,  // 记录原始路径方便查找歌词文件, 同级别目录
+    duration: float,  // 秒
+    duration-desc: string, // 秒描述为 分钟:秒数 样式
+    title: string,
+    artist: string,
+    album: string,
+}
+
+// 歌词行结构
+export struct LyricLine {
+    time: float,  // 时间戳（秒）
+    text: string, // 歌词文本
+}

@@ -1,0 +1,19 @@
+import { Button } from "std-widgets.slint";
+
+// 顶部菜单, 系统提供
+export component Menu inherits Window {
+    callback new-requested();
+
+    MenuBar {
+        Menu {
+            title: @tr("File");
+            MenuItem {
+                // 导入本地音乐
+                title: @tr("Import");
+                activated => {
+                    root.new-requested();
+                }
+            }
+        }
+    }
+}
