@@ -22,7 +22,11 @@ codegen-units = 1
 lofty = "0.22.4"
 rfd = "0.16.0"
 rodio = "0.21.1"
+single-instance = "0.3.3"
 slint = "1.14.1"
+log = "0.4.29"
+env_logger = "0.11.8"
+image = "0.25.9"
 
 [build-dependencies]
 slint-build = "1.14.1"

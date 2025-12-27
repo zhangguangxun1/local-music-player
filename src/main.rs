@@ -3,39 +3,24 @@
 // 在其他平台上忽略此设置
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod app;
 mod audio;
-mod info;
 mod load;
 mod lyric;
-
-use crate::audio::playback;
-use std::error::Error;
-use std::sync::{Arc, Mutex};
+mod manager;
+mod util;
 
 slint::include_modules!();
 
-fn main() -> Result<(), Box<dyn Error>> {
-    // 创建应用
-    let ui = App::new()?;
+fn main() {
+    // 初始化日志配置, 暂时只处理控制台输出, 并且仅有 error 及以上级别会输出
+    env_logger::init();
 
-    // 初始化音频等设备驱动程序, 首次播放时实际执行初始化
-    let player = Arc::new(Mutex::new(playback::AudioPlayer::new()));
+    // 确保该名称下仅启动一个实例程序
+    if !util::instance::check_is_single_instance("Local-music-player") {
+        return;
+    }
 
-    // 选择音乐文件夹并显示歌曲列表
-    load::ui::show_music_list(&ui);
-
-    // 双击选中播放选中的音乐, 并跳转到详情
-    audio::ui::double_click_playback(&ui, &player);
-
-    // 详情页播放音乐
-    info::ui::pressed_play(&ui, &player);
-    info::ui::pressed_pause(&ui, &player);
-    info::ui::pressed_next(&ui, &player);
-    info::ui::pressed_prev(&ui, &player);
-    info::ui::pressed_repeat_list(&ui);
-    info::ui::pressed_shuffle_list(&ui);
-
-    ui.run()?;
-
-    Ok(())
+    // 启动应用
+    app::app::start();
 }

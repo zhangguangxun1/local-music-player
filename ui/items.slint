@@ -1,0 +1,67 @@
+import { ItemTitle } from "item-title.slint";
+import { ItemContent } from "item-content.slint";
+import { ItemPanel } from "item-panel.slint";
+import { MusicInfo } from "type.slint";
+
+// 歌曲列表主界面
+export component Items inherits Window {
+    // 双击播放歌曲
+    callback double-click-play(MusicInfo);
+    // 乱序播放
+    callback shuffle-play();
+    // 上一首播放
+    callback play-prev();
+    // 下一首播放
+    callback play-next();
+    // 列表重复播放
+    callback repeat-play();
+    // 当前播放
+    callback current-play();
+    // 当前暂停
+    callback current-pause();
+
+    VerticalLayout {
+        // 歌曲标题
+        ItemTitle {
+            width: 100%;
+            height: 5%;
+        }
+        // 歌曲列表
+        ItemContent {
+            width: 100%;
+            height: 75%;
+            double-click-play(music-info) => {
+                root.double-click-play(music-info);
+            }
+        }
+        // 播放控制区
+        ItemPanel {
+            width: 100%;
+            height: 20%;
+
+            shuffle-play => {
+                root.shuffle-play();
+            }
+
+            play-prev => {
+                root.play-prev();
+            }
+
+            play-next => {
+                root.play-next();
+            }
+
+            repeat-play => {
+                root.repeat-play();
+            }
+
+            current-play => {
+                root.current-play();
+            }
+
+            current-pause => {
+                root.current-pause();
+            }
+        }
+    }
+}

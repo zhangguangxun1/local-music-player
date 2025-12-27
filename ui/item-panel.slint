@@ -1,0 +1,198 @@
+import { ProgressIndicator } from "std-widgets.slint";
+import { Attribute, Util } from "global.slint";
+import { Play, Pause, Prev, Next, Repeat, Shuffle, Cover } from "path.slint";
+
+// 歌曲播放面板
+export component ItemPanel inherits Window {
+    // 当前歌曲是否播放
+    in-out property <bool> is-playing <=> Attribute.playing;
+    // 如果图片宽度为 0，则认为它是空的
+    property <bool> is-empty: Attribute.current-cover-image.width == 0;
+
+    // 乱序播放
+    callback shuffle-play();
+    // 上一首播放
+    callback play-prev();
+    // 下一首播放
+    callback play-next();
+    // 列表重复播放
+    callback repeat-play();
+    // 当前播放
+    callback current-play();
+    // 当前暂停
+    callback current-pause();
+
+    HorizontalLayout {
+        padding: 10px;
+        alignment: space-between;
+        // 封面图片
+        Rectangle {
+            width: 18%;
+            height: 98%;
+            clip: true;
+
+            if !is-empty:Image {
+                width: 100%;
+                height: 100%;
+                image-fit: contain;
+                source: Attribute.current-cover-image;
+            }
+
+            if is-empty:Cover {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        // 歌曲进度时长播放区域等信息
+        Rectangle {
+            width: 80%;
+            height: 98%;
+            VerticalLayout {
+                spacing: 5px;
+                // 歌曲播放进度时长信息区域
+                Rectangle {
+                    width: 100%;
+                    height: 20%;
+                    HorizontalLayout {
+                        alignment: space-between;
+                        Rectangle {
+                            width: 10%;
+                            Text {
+                                width: 100%;
+                                height: 100%;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                                text: "02:01";
+                            }
+                        }
+
+                        Rectangle {
+                            width: 80%;
+                            ProgressIndicator {
+                                width: 100%;
+                                height: 100%;
+                                progress: Attribute.progress;
+                            }
+                        }
+
+                        Rectangle {
+                            width: 10%;
+                            Text {
+                                width: 100%;
+                                height: 100%;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                                text: Util.format-time(Attribute.current-music-info.duration);
+                            }
+                        }
+                    }
+                }
+
+                // 歌曲信息
+                Rectangle {
+                    width: 100%;
+                    height: 30%;
+                    clip: true;
+                    Text {
+                        width: 100%;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                        color: Attribute.default-font-color;
+                        font-weight: Attribute.default-font-weight;
+                        text: Attribute.current-music-info.title + " - " + Attribute.current-music-info.artist + " - " + Attribute.current-music-info.album;
+                    }
+                }
+
+                // 播放区域
+                Rectangle {
+                    width: 100%;
+                    height: 40%;
+                    HorizontalLayout {
+                        padding: 10px;
+                        alignment: center;
+                        Rectangle {
+                            width: 20%;
+                            Shuffle {
+                                x: parent.width / 2 - self.width / 2;
+                                y: parent.height / 2 - self.height / 2;
+                                width: 20px;
+                                height: 20px;
+
+                                clicked => {
+                                    root.shuffle-play();
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            width: 20%;
+                            Prev {
+                                x: parent.width / 2 - self.width / 2;
+                                y: parent.height / 2 - self.height / 2;
+                                width: 20px;
+                                height: 20px;
+
+                                clicked => {
+                                    root.play-prev();
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            width: 20%;
+                            if is-playing: Pause {
+                                x: parent.width / 2 - self.width / 2;
+                                y: parent.height / 2 - self.height / 2;
+                                width: 20px;
+                                height: 20px;
+
+                                clicked => {
+                                    root.current-pause();
+                                }
+                            }
+                            if !is-playing: Play {
+                                x: parent.width / 2 - self.width / 2;
+                                y: parent.height / 2 - self.height / 2;
+                                width: 20px;
+                                height: 20px;
+
+                                clicked => {
+                                    root.current-play();
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            width: 20%;
+                            Next {
+                                x: parent.width / 2 - self.width / 2;
+                                y: parent.height / 2 - self.height / 2;
+                                width: 20px;
+                                height: 20px;
+
+                                clicked => {
+                                    root.play-next();
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            width: 20%;
+                            Repeat {
+                                x: parent.width / 2 - self.width / 2;
+                                y: parent.height / 2 - self.height / 2;
+                                width: 20px;
+                                height: 20px;
+
+                                clicked => {
+                                    root.repeat-play();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

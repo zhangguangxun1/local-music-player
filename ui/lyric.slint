@@ -1,0 +1,32 @@
+import { ListView } from "std-widgets.slint";
+import { Attribute } from "global.slint";
+import { ItemPanel } from "item-panel.slint";
+
+// 歌词展示
+export component Lyric inherits Window {
+    VerticalLayout {
+        Rectangle {
+            width: 100%;
+            height: 80%;
+            VerticalLayout {
+                padding: 10px;
+                ListView {
+                    for lyric-info[idx] in Attribute.current-lyric-info-list: Rectangle {
+                        width: 100%;
+                        height: 20px;
+                        Text {
+                            color: idx == 5 ? blue : green;
+                            font-size: idx == 5 ? 16px : 12px;
+                            text: lyric-info.text;
+                        }
+                    }
+                }
+            }
+        }
+
+        ItemPanel {
+            width: 100%;
+            height: 20%;
+        }
+    }
+}

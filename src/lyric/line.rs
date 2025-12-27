@@ -1,3 +1,6 @@
+use crate::LyricInfo;
+use slint::SharedString;
+use std::fs;
 use std::path::Path;
 
 // 检查文件是否存在
@@ -14,7 +17,7 @@ fn replace_ext_to_lrc(file_path: &str) -> String {
 }
 
 // 将歌曲文件归一到歌词文件, 文件同名, 后缀为 .lrc 的为该歌曲的歌词文件
-pub fn get_lrc_file(file_path: &str) -> Option<String> {
+fn get_lrc_file(file_path: &str) -> Option<String> {
     if !file_exists(file_path) {
         return None;
     }
@@ -34,8 +37,13 @@ pub struct LyricLine {
 }
 
 // 将歌词文件解析为时间维度的歌词列表
-pub fn get_lyrics(content: &str) -> Vec<LyricLine> {
+fn parse_lyrics(lrc_file: &str) -> Vec<LyricLine> {
     let mut lines = Vec::new();
+    let content = fs::read_to_string(lrc_file).expect("Failed to read file");
+    if content.is_empty() {
+        return lines;
+    }
+
     for line in content.lines() {
         let mut duration: u64 = 0;
         if line.starts_with("[0") && line.len() > 10 {
@@ -82,4 +90,20 @@ fn get_by_content(text: &str) -> Option<&str> {
         }
     }
     None
+}
+
+// 获取歌曲对应的歌词列表
+pub fn get_lyric_info_list(path: &str) -> Vec<LyricInfo> {
+    let mut lyric_info_list: Vec<LyricInfo> = Vec::new();
+    if let Some(lrc_file) = get_lrc_file(path) {
+        let _lines = parse_lyrics(&lrc_file);
+        for _line in _lines {
+            lyric_info_list.push(LyricInfo {
+                text: SharedString::from(_line.text),
+                time: _line.time as f32,
+            });
+        }
+    }
+
+    lyric_info_list
 }

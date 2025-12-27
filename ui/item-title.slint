@@ -1,0 +1,19 @@
+import { Attribute } from "global.slint";
+
+// 歌曲列表标题
+export component ItemTitle inherits Window {
+    HorizontalLayout {
+        padding-left: 10px;
+        for item-info in Attribute.item-title-info-list: Rectangle {
+            width: item-info.width;
+            clip: true;
+            Text {
+                color: Attribute.default-font-color;
+                font-weight: Attribute.default-font-weight;
+                width: 100%;
+                horizontal-alignment: left;
+                text: item-info.text;
+            }
+        }
+    }
+}

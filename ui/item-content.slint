@@ -1,0 +1,75 @@
+import { Attribute, Util } from "global.slint";
+import { ListView } from "std-widgets.slint";
+import { MusicInfo } from "type.slint";
+
+// 歌曲列表, 宽度继承 title 的宽度
+export component ItemContent inherits Window {
+    // 单击选中某一首歌曲
+    in-out property <int> selected;
+
+    // 双击播放歌曲
+    callback double-click-play(MusicInfo);
+
+    VerticalLayout {
+        ListView {
+            for music-info[idx] in Attribute.music-list: Rectangle {
+                width: 100%;
+                height: 25px;
+                background: root.selected == idx ? green : transparent;
+                TouchArea {
+                    HorizontalLayout {
+                        padding-left: 10px;
+
+                        Rectangle {
+                            width: 40%;
+                            clip: true;
+                            Text {
+                                width: 100%;
+                                horizontal-alignment: left;
+                                text: music-info.title;
+                            }
+                        }
+
+                        Rectangle {
+                            width: 20%;
+                            clip: true;
+                            Text {
+                                width: 100%;
+                                horizontal-alignment: left;
+                                text: music-info.artist;
+                            }
+                        }
+
+                        Rectangle {
+                            width: 30%;
+                            clip: true;
+                            Text {
+                                width: 100%;
+                                horizontal-alignment: left;
+                                text: music-info.album;
+                            }
+                        }
+
+                        Rectangle {
+                            width: 10%;
+                            clip: true;
+                            Text {
+                                width: 100%;
+                                horizontal-alignment: left;
+                                text: Util.format-time(music-info.duration);
+                            }
+                        }
+                    }
+
+                    clicked => {
+                        root.selected = idx;
+                    }
+
+                    double-clicked => {
+                        root.double-click-play(music-info);
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,6 +1,8 @@
-use lofty;
-use lofty::prelude::{Accessor, AudioFile, TaggedFileExt};
-use rfd::FileDialog;
+use crate::MusicInfo;
+use lofty::file::{AudioFile, TaggedFileExt};
+use lofty::prelude::Accessor;
+use rfd::{FileDialog, MessageButtons, MessageDialog, MessageDialogResult};
+use slint::SharedString;
 use std::fs;
 use std::path::PathBuf;
 
@@ -31,35 +33,91 @@ fn scan_audio_files(dir: &PathBuf, files: &mut Vec<PathBuf>) {
     }
 }
 
+// 选择文件类型
+enum SelectionType {
+    Folder, // 文件夹
+    Files,  // 文件
+}
+
+// 因为无法区分用户具体选择的文件还是文件夹, 故弹框提示选择
+fn get_selection_type() -> Option<SelectionType> {
+    let single_file = "选择文件".to_string();
+    let folder = "选择文件夹".to_string();
+
+    let result = MessageDialog::new()
+        .set_title("选择文件类型")
+        .set_description("")
+        .set_buttons(MessageButtons::OkCancelCustom(
+            folder.clone(),
+            single_file.clone(),
+        ))
+        .show();
+
+    match result {
+        MessageDialogResult::Yes => None,
+        MessageDialogResult::No => None,
+        MessageDialogResult::Ok => None,
+        MessageDialogResult::Cancel => None,
+        MessageDialogResult::Custom(custom) => {
+            if custom == single_file {
+                Some(SelectionType::Files)
+            } else if custom == folder {
+                Some(SelectionType::Folder)
+            } else {
+                None
+            }
+        }
+    }
+}
+
+// 根据用户选择解析歌曲文件
+fn get_audio_files() -> (String, Vec<PathBuf>) {
+    let mut path: String = "".to_string();
+    let mut audio_files = Vec::new();
+
+    if let Some(selection_type) = get_selection_type() {
+        match selection_type {
+            SelectionType::Files => {
+                if let Some(files) = FileDialog::new().set_title("选择文件").pick_files() {
+                    for file in files {
+                        if is_audio_file(&file) {
+                            audio_files.push(file);
+                        }
+                    }
+                }
+            }
+            SelectionType::Folder => {
+                if let Some(folder) = FileDialog::new().set_title("选择文件夹").pick_folder() {
+                    path = folder.to_str().unwrap_or("").to_string();
+                    // 扫描文件夹中的音频文件
+                    scan_audio_files(&folder, &mut audio_files);
+                }
+            }
+        }
+    }
+
+    (path, audio_files)
+}
+
 // 音频元数据
 pub struct AudioMetadata {
-    pub index: u32,
     pub path: String,  // 记录原始路径方便查找歌词文件, 同级别目录
-    pub duration: f64, // 时长
-    pub duration_desc: String,
-    pub sample_rate: u32, // 采样率
-    pub channels: u8,     // 频道
-    pub bitrate: u32,     // 比特率
+    pub duration: f32, // 时长
     pub title: Option<String>,
     pub artist: Option<String>,
     pub album: Option<String>,
 }
 
 // 解析音乐文件元数据
-fn get_audio_metadata(index: u32, path: &PathBuf) -> Option<AudioMetadata> {
+fn get_audio_metadata(path: &PathBuf) -> Option<AudioMetadata> {
     if let Ok(tagged_file) = lofty::read_from_path(path) {
         let properties = tagged_file.properties();
         let tag = tagged_file.primary_tag();
 
-        let duration = properties.duration().as_secs_f64();
+        let duration = properties.duration().as_secs_f32();
         Some(AudioMetadata {
-            index,
             path: path.display().to_string(),
             duration,
-            duration_desc: format_duration_seconds(duration),
-            sample_rate: properties.sample_rate().unwrap_or(0),
-            channels: properties.channels().unwrap_or(0),
-            bitrate: properties.audio_bitrate().unwrap_or(0),
             title: tag.and_then(|t| t.title().map(String::from)),
             artist: tag.and_then(|t| t.artist().map(String::from)),
             album: tag.and_then(|t| t.album().map(String::from)),
@@ -69,55 +127,42 @@ fn get_audio_metadata(index: u32, path: &PathBuf) -> Option<AudioMetadata> {
     }
 }
 
-// 将因为时长转化为 分钟:秒数 格式
-fn format_duration_seconds(seconds: f64) -> String {
-    let minutes = (seconds / 60.0).floor() as i32;
-    let seconds_remaining = (seconds % 60.0) as i32;
-
-    format!("{:02}:{:02}", minutes, seconds_remaining)
-}
-
-// 打开文件夹对话框选择多个音频文件
-fn get_audio_files() -> Vec<PathBuf> {
-    #[cfg(not(target_arch = "wasm32"))]
-    {
-        if let Some(folder) = FileDialog::new().set_title("选择音乐文件夹").pick_folder() {
-            let mut audio_files = Vec::new();
-
-            // 扫描文件夹中的音频文件
-            scan_audio_files(&folder, &mut audio_files);
-            audio_files
-        } else {
-            Vec::new()
-        }
-    }
-    // Web版本需要不同的实现
-    #[cfg(target_arch = "wasm32")]
-    {
-        Vec::new()
-    }
-}
-
 // 获取音乐文件元数据信息列表
-pub fn get_audio_metadata_list() -> Vec<AudioMetadata> {
-    let audio_files = get_audio_files();
+fn get_audio_metadata_list() -> (String, Vec<AudioMetadata>) {
+    let (path, audio_files) = get_audio_files();
     let mut audio_metadata_list: Vec<AudioMetadata> = Vec::new();
-    for (index, audio_file) in audio_files.into_iter().enumerate() {
-        if let Some(metadata) = get_audio_metadata(index as u32, &audio_file) {
+    for (_, audio_file) in audio_files.into_iter().enumerate() {
+        if let Some(metadata) = get_audio_metadata(&audio_file) {
             audio_metadata_list.push(metadata);
         }
     }
-    audio_metadata_list
+    (path, audio_metadata_list)
+}
+
+// 获取歌曲列表
+pub fn get_music_info_list() -> (String, Vec<MusicInfo>) {
+    let (path, metadata_list) = get_audio_metadata_list();
+    let mut music_info_list: Vec<MusicInfo> = Vec::new();
+    for metadata in metadata_list {
+        music_info_list.push(MusicInfo {
+            album: SharedString::from(metadata.album.unwrap_or("".to_string())),
+            artist: SharedString::from(metadata.artist.unwrap_or("".to_string())),
+            duration: metadata.duration,
+            path: SharedString::from(metadata.path),
+            title: SharedString::from(metadata.title.unwrap_or("".to_string())),
+        });
+    }
+
+    (path, music_info_list)
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::load::loader::format_duration_seconds;
+    use crate::load::loader::get_audio_files;
 
     #[test]
-    fn test_format_duration_seconds() {
-        let duration = 254.003f64;
-        println!("{}", format_duration_seconds(duration));
-        assert_eq!(format_duration_seconds(duration), "04:14");
+    fn test_get_audio_files() {
+        let files = get_audio_files();
+        println!("{:#?}", files);
     }
 }

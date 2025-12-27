@@ -1,0 +1,111 @@
+import { Attribute } from "global.slint";
+import { TabWidget } from "std-widgets.slint";
+import { Items } from "items.slint";
+import { Lyric } from "lyric.slint";
+import { Config } from "config.slint";
+import { MusicInfo } from "type.slint";
+
+// 导出全局信息到入口提供给 Rust 访问
+export { Attribute }
+
+// 程序主窗口
+export component AppWindow inherits Window {
+    title: Attribute.top-title;
+    min-width: 600px;
+    min-height: 700px;
+    preferred-width: 600px;
+    preferred-height: 700px;
+
+    // 请求打开文件或者文件夹
+    callback select-files();
+    // 双击播放歌曲
+    callback double-click-play(MusicInfo);
+    // 乱序播放
+    callback shuffle-play();
+    // 上一首播放
+    callback play-prev();
+    // 下一首播放
+    callback play-next();
+    // 列表重复播放
+    callback repeat-play();
+    // 当前播放
+    callback current-play();
+    // 当前暂停
+    callback current-pause();
+
+    TabWidget {
+        Tab {
+            title: "歌曲";
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                Items {
+                    width: 100%;
+                    height: 100%;
+                    double-click-play(music-info) => {
+                        root.double-click-play(music-info);
+                    }
+                    shuffle-play => {
+                        root.shuffle-play();
+                    }
+
+                    play-prev => {
+                        root.play-prev();
+                    }
+
+                    play-next => {
+                        root.play-next();
+                    }
+
+                    repeat-play => {
+                        root.repeat-play();
+                    }
+
+                    current-play => {
+                        root.current-play();
+                    }
+
+                    current-pause => {
+                        root.current-pause();
+                    }
+                }
+            }
+        }
+
+        Tab {
+            title: "歌词";
+            Rectangle {
+                width: 100%;
+                height: 100%;
+
+                Lyric {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+        }
+
+        Tab {
+            title: "配置";
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                Config {
+                    width: 100%;
+                    height: 100%;
+                    select-files => {
+                        root.select-files();
+                    }
+                }
+            }
+        }
+
+        Tab {
+            title: "关于";
+            Rectangle {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+}

@@ -1,0 +1,45 @@
+import { Button } from "std-widgets.slint";
+import { Attribute } from "global.slint";
+
+// 配置
+export component Config inherits Window {
+    // 请求打开文件或者文件夹
+    callback select-files();
+
+    VerticalLayout {
+        padding: 15px;
+        Rectangle {
+            height: 20px;
+            HorizontalLayout {
+                Rectangle {
+                    width: 15%;
+                    Text {
+                        width: 100%;
+                        color: Attribute.default-font-color;
+                        font-weight: Attribute.default-font-weight;
+                        text: "选择音乐: ";
+                    }
+                }
+
+                Rectangle {
+                    width: 65%;
+                    Text {
+                        width: 100%;
+                        text: Attribute.music-folder;
+                    }
+                }
+
+                Rectangle {
+                    width: 20%;
+                    Button {
+                        width: 100%;
+                        text: "选择文件/文件夹";
+                        clicked => {
+                            root.select-files();
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
