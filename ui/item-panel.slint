@@ -109,7 +109,7 @@ export component ItemPanel inherits Window {
                         vertical-alignment: center;
                         color: Attribute.default-font-color;
                         font-weight: Attribute.default-font-weight;
-                        text: Attribute.current-music-info.title + " - " + Attribute.current-music-info.artist + " - " + Attribute.current-music-info.album;
+                        text: @tr("{} - {} - {}", Attribute.current-music-info.title, Attribute.current-music-info.artist, Attribute.current-music-info.album);
                     }
                 }
 

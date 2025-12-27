@@ -9,14 +9,14 @@ export global Attribute {
     in property <brush> default-font-color: blue;
 
     // 窗口顶部标题, 歌曲播放时为 歌曲名-作者-专辑
-    in property <string> top-title: "Local Music Player";
+    in property <string> top-title: @tr("Local Music Player");
 
     // 歌曲列表标题配置
     in property <[ItemTitleInfo]> item-title-info-list:[
-        { text:"歌名", width: 40%},     
-        { text:"演唱", width: 20%},     
-        { text:"专辑", width: 30%},     
-        { text:"时长", width: 10%},     
+        { text:@tr("歌名"), width: 40%},
+        { text:@tr("演唱"), width: 20%},
+        { text:@tr("专辑"), width: 30%},
+        { text:@tr("时长"), width: 10%},
     ];
 
     // 歌曲列表

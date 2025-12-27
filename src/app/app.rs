@@ -3,7 +3,6 @@ use crate::AppWindow;
 use crate::{audio, load};
 use log::error;
 use slint::ComponentHandle;
-use std::sync::{Arc, Mutex};
 
 pub struct App {
     ui: Option<AppWindow>,

@@ -17,7 +17,7 @@ export component Config inherits Window {
                         width: 100%;
                         color: Attribute.default-font-color;
                         font-weight: Attribute.default-font-weight;
-                        text: "选择音乐: ";
+                        text: @tr("选择音乐: ");
                     }
                 }
 
@@ -33,7 +33,7 @@ export component Config inherits Window {
                     width: 20%;
                     Button {
                         width: 100%;
-                        text: "选择文件/文件夹";
+                        text: @tr("选择文件/文件夹");
                         clicked => {
                             root.select-files();
                         }
