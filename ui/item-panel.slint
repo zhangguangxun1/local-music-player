@@ -1,4 +1,4 @@
-import { ProgressIndicator } from "std-widgets.slint";
+import { ProgressIndicator, Slider } from "std-widgets.slint";
 import { Attribute, Util } from "global.slint";
 import { Play, Pause, Prev, Next, Repeat, Shuffle, Cover } from "path.slint";
 
@@ -6,6 +6,8 @@ import { Play, Pause, Prev, Next, Repeat, Shuffle, Cover } from "path.slint";
 export component ItemPanel inherits Window {
     // 当前歌曲是否播放
     in-out property <bool> is-playing <=> Attribute.playing;
+    // 当前歌曲播放进度
+    in-out property <float> current-progress <=> Attribute.progress;
     // 如果图片宽度为 0，则认为它是空的
     property <bool> is-empty: Attribute.current-cover-image.width == 0;
 
@@ -21,6 +23,8 @@ export component ItemPanel inherits Window {
     callback current-play();
     // 当前暂停
     callback current-pause();
+    // 改变歌曲播放进度
+    callback change-progress(float);
 
     HorizontalLayout {
         padding: 10px;
@@ -63,16 +67,21 @@ export component ItemPanel inherits Window {
                                 height: 100%;
                                 horizontal-alignment: center;
                                 vertical-alignment: center;
-                                text: "02:01";
+                                text: Util.format-time(root.current-progress);
                             }
                         }
 
                         Rectangle {
                             width: 80%;
-                            ProgressIndicator {
+                            Slider {
                                 width: 100%;
                                 height: 100%;
-                                progress: Attribute.progress;
+                                minimum: 0;
+                                maximum: Attribute.current-music-info.duration;
+                                value: root.current-progress;
+                                released(value) => {
+                                    root.change-progress(value);
+                                }
                             }
                         }
 

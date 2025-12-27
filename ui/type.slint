@@ -8,6 +8,7 @@ export struct ItemTitleInfo {
 
 // 歌曲元数据信息
 export struct MusicInfo {
+    id: int, // 当前歌曲标识, 一般来说是自增的
     path: string, // 歌曲绝对路径
     title: string, // 曲名
     artist: string, // 艺术家这里仅仅是歌唱者
@@ -19,4 +20,11 @@ export struct MusicInfo {
 export struct LyricInfo {
     time: float, // 歌词秒数
     text: string, // 歌词文本
+}
+
+// 播放模式
+export enum PlayMode {
+    Click,   // 双击播放
+    Repeat,  // 重复列表
+    Shuffle  // 乱序播放
 }

@@ -20,174 +20,22 @@ export global Attribute {
     ];
 
     // 歌曲列表
-    in-out property <[MusicInfo]> music-list: [
-        {
-            path: "",
-            title: "天上明月心上人",
-            artist: "蔷薇团长",
-            album: "天上明月心上人",
-            duration: 230.68,
-        },
-        {
-            path: "",
-            title: "别过之后",
-            artist: "枝上桃",
-            album: "别过之后",
-            duration: 240.68,
-        },
-        {
-            path: "",
-            title: "醉美人",
-            artist: "安子与九妹",
-            album: "玲琅街",
-            duration: 220.58,
-        },
-        {
-            path: "",
-            title: "我的楼兰",
-            artist: "云朵",
-            album: "我的楼兰",
-            duration: 210.08,
-        },
-    ];
+    in-out property <[MusicInfo]> music-list: [];
 
     // 歌曲播放进度条
-    in property <float> progress: 0.8;
+    in property <float> progress;
 
     // 当前是否播放歌曲
     in-out property <bool> playing: true;
 
     // 当前歌曲
-    in property <MusicInfo> current-music-info: {
-        path: "",
-        title: "我的楼兰",
-        artist: "云朵",
-        album: "我的楼兰",
-        duration: 210.08,
-    };
+    in property <MusicInfo> current-music-info;
 
     // 当前封面图片
     in property <image> current-cover-image;
 
     // 当前歌词
-    in property <[LyricInfo]> current-lyric-info-list: [
-        {
-            time: 0,
-            text: "by:天琴实验室AI生成v1.0",
-        },
-        {
-            time: 1,
-            text: "不爱我别骗我",
-        },
-        {
-            time: 2,
-            text: "作词：AZ 珍珍",
-        },
-        {
-            time: 3,
-            text: "作曲：AZ 珍珍",
-        },
-        {
-            time: 4,
-            text: "演唱：AZ 珍珍",
-        },
-        {
-            time: 5,
-            text: "封面：AZ 珍珍",
-        },
-        {
-            time: 6,
-            text: "编曲：彭锐",
-        },
-        {
-            time: 7,
-            text: "和声：AZ 珍珍",
-        },
-        {
-            time: 8,
-            text: "混音：彭锐",
-        },
-        {
-            time: 9,
-            text: "制作人：AZ 珍珍",
-        },
-        {
-            time: 10,
-            text: "出品：珍珍音乐",
-        },
-        {
-            time: 11,
-            text: "商用授权：海葵聚音小程序",
-        },
-        {
-            time: 12,
-            text: "OP：坚诚文化",
-        },
-        {
-            time: 13,
-            text: "【未经著作权人许可不得翻唱翻录或使用】",
-        },
-        {
-            time: 14,
-            text: "这一路走来心痛最多",
-        },
-        {
-            time: 15,
-            text: "眼泪也流了好多",
-        },
-        {
-            time: 15,
-            text: "这一路走来入心有过",
-        },
-        {
-            time: 15,
-            text: "动了情又错过",
-        },
-        {
-            time: 15,
-            text: "我把真心全都给你",
-        },
-        {
-            time: 15,
-            text: "你却给我伤心",
-        },
-        {
-            time: 15,
-            text: "我把你当作唯一",
-        },
-        {
-            time: 15,
-            text: "你却把我当其一",
-        },
-        {
-            time: 15,
-            text: "不爱我就别伤我",
-        },
-        {
-            time: 15,
-            text: "为你拒绝所有人",
-        },
-        {
-            time: 15,
-            text: "为你付出那么多",
-        },
-        {
-            time: 15,
-            text: "不爱我就别骗我",
-        },
-        {
-            time: 15,
-            text: "不爱我别招惹我",
-        },
-        {
-            time: 15,
-            text: "我的心也很脆弱",
-        },
-        {
-            time: 15,
-            text: "我也会伤心难过",
-        },
-    ];
+    in property <[LyricInfo]> current-lyric-info-list: [];
 
     // 选择音乐播放文件或者文件夹
     in property <string> music-folder: "";

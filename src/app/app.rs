@@ -1,6 +1,6 @@
-use crate::AppWindow;
 use crate::audio::player;
 use crate::manager::dispatch;
+use crate::AppWindow;
 use crate::{audio, load};
 use log::error;
 use slint::ComponentHandle;
@@ -49,7 +49,14 @@ impl App {
         if let Some(ui) = &self.ui {
             if let Some(d) = &self.dispatch {
                 load::ui::select_files(&ui, &d);
-                audio::ui::double_click_play(&ui, &d);
+                audio::ui::play(&ui, &d);
+                audio::ui::current_play(&ui, &d);
+                audio::ui::current_pause(&ui, &d);
+                audio::ui::change_progress(&ui, &d);
+                audio::ui::play_prev(&ui, &d);
+                audio::ui::play_next(&ui, &d);
+                audio::ui::repeat_list(ui, &d);
+                audio::ui::shuffle_list(ui, &d);
             }
         }
     }

@@ -143,8 +143,9 @@ fn get_audio_metadata_list() -> (String, Vec<AudioMetadata>) {
 pub fn get_music_info_list() -> (String, Vec<MusicInfo>) {
     let (path, metadata_list) = get_audio_metadata_list();
     let mut music_info_list: Vec<MusicInfo> = Vec::new();
-    for metadata in metadata_list {
+    for (idx, metadata) in metadata_list.into_iter().enumerate() {
         music_info_list.push(MusicInfo {
+            id: idx as i32,
             album: SharedString::from(metadata.album.unwrap_or("".to_string())),
             artist: SharedString::from(metadata.artist.unwrap_or("".to_string())),
             duration: metadata.duration,

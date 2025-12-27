@@ -1,12 +1,12 @@
 import { ItemTitle } from "item-title.slint";
 import { ItemContent } from "item-content.slint";
 import { ItemPanel } from "item-panel.slint";
-import { MusicInfo } from "type.slint";
+import { PlayMode, MusicInfo } from "type.slint";
 
 // 歌曲列表主界面
 export component Items inherits Window {
     // 双击播放歌曲
-    callback double-click-play(MusicInfo);
+    callback play(PlayMode, MusicInfo);
     // 乱序播放
     callback shuffle-play();
     // 上一首播放
@@ -19,6 +19,8 @@ export component Items inherits Window {
     callback current-play();
     // 当前暂停
     callback current-pause();
+    // 改变歌曲播放进度
+    callback change-progress(float);
 
     VerticalLayout {
         // 歌曲标题
@@ -30,8 +32,8 @@ export component Items inherits Window {
         ItemContent {
             width: 100%;
             height: 75%;
-            double-click-play(music-info) => {
-                root.double-click-play(music-info);
+            play(mode, music-info) => {
+                root.play(mode, music-info);
             }
         }
         // 播放控制区
@@ -61,6 +63,10 @@ export component Items inherits Window {
 
             current-pause => {
                 root.current-pause();
+            }
+
+            change-progress(val) => {
+                root.change-progress(val);
             }
         }
     }

@@ -1,6 +1,8 @@
+use log::error;
 use rodio::{OutputStream, Sink};
 use std::fs::File;
 use std::io::BufReader;
+use std::time::Duration;
 
 pub struct Player {
     sink: Option<Sink>,            // 复用同一个sink
@@ -53,6 +55,18 @@ impl Player {
     pub fn pause(&self) {
         if let Some(sink) = &self.sink {
             sink.pause();
+        }
+    }
+
+    pub fn seek(&self, duration: f32) {
+        if duration <= 0.0 {
+            return;
+        }
+        if let Some(sink) = &self.sink {
+            match sink.try_seek(Duration::from_secs_f32(duration)) {
+                Ok(_) => (),
+                Err(e) => error!("Error try seek: {:?}", e),
+            }
         }
     }
 
