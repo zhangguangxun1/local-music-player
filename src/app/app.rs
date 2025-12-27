@@ -1,4 +1,3 @@
-use crate::audio::player;
 use crate::manager::dispatch;
 use crate::AppWindow;
 use crate::{audio, load};
@@ -36,10 +35,7 @@ impl App {
                 let (d, receiver) = dispatch::Dispatch::new();
                 self.dispatch = Some(d);
 
-                // 初始化音频等设备驱动程序, 首次播放时实际执行初始化
-                let player = Arc::new(Mutex::new(player::Player::new()));
-
-                dispatch::listen(&_ui, &player, receiver);
+                dispatch::listen(&_ui, receiver);
             }
         }
     }

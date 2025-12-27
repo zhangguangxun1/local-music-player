@@ -5,7 +5,7 @@ use crate::manager::command;
 use crate::{AppWindow, Attribute, PlayMode};
 use log::error;
 use slint::{ComponentHandle, Model, SharedString};
-use std::sync::{mpsc, Arc, Mutex};
+use std::sync::{mpsc};
 use std::thread;
 
 pub struct Dispatch {
@@ -23,13 +23,14 @@ impl Dispatch {
 // 使用一个固定线程监听用户的操作, 并对操作进行对应的渲染和信息获取
 pub fn listen(
     ui: &AppWindow,
-    player: &Arc<Mutex<player::Player>>,
     receiver: mpsc::Receiver<command::Command>,
 ) {
     let ui_weak = ui.as_weak();
-    let player_clone = player.clone();
 
     thread::spawn(move || {
+        // 初始化音频等设备驱动程序, 首次播放时实际执行初始化
+        let mut player = player::Player::new();
+
         while let Ok(cmd) = receiver.recv() {
             match cmd {
                 command::Command::SelectFiles => {
@@ -48,12 +49,11 @@ pub fn listen(
                     }
                 }
                 command::Command::Play(mode, music_info) => {
-                    let mut _player = player_clone.lock().unwrap();
-                    _player.load(&music_info.path);
+                    player.load(&music_info.path);
 
                     let lyrics = line::get_lyric_info_list(&music_info.path);
 
-                    _player.play();
+                    player.play();
 
                     let ui_weak_clone = ui_weak.clone();
                     match slint::invoke_from_event_loop(move || {
@@ -81,11 +81,10 @@ pub fn listen(
                     }
                 }
                 command::Command::PlayCurrent => {
-                    let mut _player = player_clone.lock().unwrap();
-                    if _player.is_playing() {
+                    if player.is_playing() {
                         return;
                     }
-                    _player.play();
+                    player.play();
 
                     let ui_weak_clone = ui_weak.clone();
                     match slint::invoke_from_event_loop(move || {
@@ -99,9 +98,8 @@ pub fn listen(
                     }
                 }
                 command::Command::Pause => {
-                    let mut _player = player_clone.lock().unwrap();
-                    if _player.is_playing() {
-                        _player.pause();
+                    if player.is_playing() {
+                        player.pause();
 
                         let ui_weak_clone = ui_weak.clone();
                         match slint::invoke_from_event_loop(move || {
@@ -116,8 +114,7 @@ pub fn listen(
                     }
                 }
                 command::Command::ChangeProgress(val) => {
-                    let mut _player = player_clone.lock().unwrap();
-                    _player.seek(val);
+                    player.seek(val);
 
                     let ui_weak_clone = ui_weak.clone();
                     match slint::invoke_from_event_loop(move || {
