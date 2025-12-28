@@ -14,6 +14,15 @@ pkg-config: Rust 的构建脚本（build.rs）需要这个工具来定位系统�
 
 ## Mac
 
-目前 Mac 上编译不了, 部分 struct 在 Mac 环境提示 Send Sync 等实现缺失, 同时默认的编译环境编译完毕后无法关联 Mac 系统上的中文字体
+目前 Mac 上编译部分 struct 在 Mac 环境提示 Send Sync 等实现缺失, 需要增加如下不安全的实现 
 
-部分编写方式 Mac 编译环境提示 线程不安全, 看应该是 rodio 库在 Mac 上的支持不同造成, 所以暂时就没关心 Mac 环境了.
+```
+// 条件编译：只在 macOS 上编译, Mac 平台需要标识这两个不安全的实现, 否则编译器检查不通过
+#[cfg(target_os = "macos")]
+unsafe impl Send for Player {}
+
+#[cfg(target_os = "macos")]
+unsafe impl Sync for Player {}
+```
+
+同时默认的编译环境编译完毕后无法关联 Mac 系统上的中文字体
