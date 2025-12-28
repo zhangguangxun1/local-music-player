@@ -1,6 +1,6 @@
 import { Attribute, Util } from "global.slint";
 import { ListView } from "std-widgets.slint";
-import { PlayMode, MusicInfo } from "type.slint";
+import { MusicInfo } from "type.slint";
 
 // 歌曲列表, 宽度继承 title 的宽度
 export component ItemContent inherits Window {
@@ -8,7 +8,7 @@ export component ItemContent inherits Window {
     in-out property <int> selected: Attribute.current-music-info.id;
 
     // 双击播放歌曲
-    callback play(PlayMode, MusicInfo);
+    callback playback(MusicInfo);
 
     VerticalLayout {
         ListView {
@@ -66,7 +66,7 @@ export component ItemContent inherits Window {
                     }
 
                     double-clicked => {
-                        root.play(PlayMode.Click, music-info);
+                        root.playback(music-info);
                     }
                 }
             }

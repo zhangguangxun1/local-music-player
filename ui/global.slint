@@ -13,10 +13,10 @@ export global Attribute {
 
     // 歌曲列表标题配置
     in property <[ItemTitleInfo]> item-title-info-list:[
-        { text:@tr("歌名"), width: 40%},
-        { text:@tr("演唱"), width: 20%},
-        { text:@tr("专辑"), width: 30%},
-        { text:@tr("时长"), width: 10%},
+        { text:@tr("歌名"), width: 40%}, 
+        { text:@tr("演唱"), width: 20%}, 
+        { text:@tr("专辑"), width: 30%}, 
+        { text:@tr("时长"), width: 10%}, 
     ];
 
     // 歌曲列表
@@ -26,7 +26,7 @@ export global Attribute {
     in property <float> progress;
 
     // 当前是否播放歌曲
-    in-out property <bool> playing: true;
+    in property <bool> playing: true;
 
     // 当前歌曲
     in property <MusicInfo> current-music-info;
@@ -36,9 +36,17 @@ export global Attribute {
 
     // 当前歌词
     in property <[LyricInfo]> current-lyric-info-list: [];
+    
+    in property <int> current-lyric-index;
 
     // 选择音乐播放文件或者文件夹
     in property <string> music-folder: "";
+
+    // 重复播放
+    in property <bool> is-repeat-play;
+
+    // 乱序播放
+    in property <bool> is-shuffle-play;
 }
 
 // 全局单例公共工具函数

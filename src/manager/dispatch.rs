@@ -2,10 +2,11 @@ use crate::audio::{album, player};
 use crate::load::loader;
 use crate::lyric::line;
 use crate::manager::command;
-use crate::{AppWindow, Attribute, PlayMode};
+use crate::{AppWindow, Attribute};
 use log::error;
-use slint::{ComponentHandle, Model, SharedString};
-use std::sync::{mpsc};
+use rand::{rng, Rng};
+use slint::{ComponentHandle, Model, SharedString, Weak};
+use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
 
 pub struct Dispatch {
@@ -23,14 +24,13 @@ impl Dispatch {
 // 使用一个固定线程监听用户的操作, 并对操作进行对应的渲染和信息获取
 pub fn listen(
     ui: &AppWindow,
+    player: &Arc<Mutex<player::Player>>,
     receiver: mpsc::Receiver<command::Command>,
 ) {
     let ui_weak = ui.as_weak();
+    let player_clone = player.clone();
 
     thread::spawn(move || {
-        // 初始化音频等设备驱动程序, 首次播放时实际执行初始化
-        let mut player = player::Player::new();
-
         while let Ok(cmd) = receiver.recv() {
             match cmd {
                 command::Command::SelectFiles => {
@@ -45,15 +45,16 @@ pub fn listen(
                         }
                     }) {
                         Ok(_) => {}
-                        Err(e) => error!("{}", e),
+                        Err(e) => error!("Dispatch command selectFiles err: {}", e),
                     }
                 }
-                command::Command::Play(mode, music_info) => {
-                    player.load(&music_info.path);
+                command::Command::Playback(music_info) => {
+                    let mut _player = player_clone.lock().unwrap();
+                    _player.load(&music_info.path);
 
                     let lyrics = line::get_lyric_info_list(&music_info.path);
 
-                    player.play();
+                    _player.play();
 
                     let ui_weak_clone = ui_weak.clone();
                     match slint::invoke_from_event_loop(move || {
@@ -66,25 +67,18 @@ pub fn listen(
                             attribute.set_playing(true);
                             attribute.set_current_lyric_info_list(lyrics.as_slice().into());
                             attribute.set_current_cover_image(cover);
-
-                            match mode {
-                                PlayMode::Click => {}
-                                PlayMode::Repeat => {
-                                    _ui.invoke_play_prev();
-                                }
-                                PlayMode::Shuffle => _ui.invoke_play_next(),
-                            }
                         }
                     }) {
                         Ok(_) => {}
-                        Err(e) => error!("{}", e),
+                        Err(e) => error!("Dispatch command playback err: {}", e),
                     }
                 }
-                command::Command::PlayCurrent => {
-                    if player.is_playing() {
+                command::Command::Play => {
+                    let _player = player_clone.lock().unwrap();
+                    if _player.is_playing() {
                         return;
                     }
-                    player.play();
+                    _player.play();
 
                     let ui_weak_clone = ui_weak.clone();
                     match slint::invoke_from_event_loop(move || {
@@ -94,12 +88,13 @@ pub fn listen(
                         }
                     }) {
                         Ok(_) => {}
-                        Err(e) => error!("{}", e),
+                        Err(e) => error!("Dispatch command play err: {}", e),
                     }
                 }
                 command::Command::Pause => {
-                    if player.is_playing() {
-                        player.pause();
+                    let _player = player_clone.lock().unwrap();
+                    if _player.is_playing() {
+                        _player.pause();
 
                         let ui_weak_clone = ui_weak.clone();
                         match slint::invoke_from_event_loop(move || {
@@ -109,12 +104,13 @@ pub fn listen(
                             }
                         }) {
                             Ok(_) => {}
-                            Err(e) => error!("{}", e),
+                            Err(e) => error!("Dispatch command pause err: {}", e),
                         }
                     }
                 }
                 command::Command::ChangeProgress(val) => {
-                    player.seek(val);
+                    let _player = player_clone.lock().unwrap();
+                    _player.seek(val);
 
                     let ui_weak_clone = ui_weak.clone();
                     match slint::invoke_from_event_loop(move || {
@@ -124,51 +120,85 @@ pub fn listen(
                         }
                     }) {
                         Ok(_) => {}
-                        Err(e) => error!("{}", e),
+                        Err(e) => error!("Dispatch command change progress err: {}", e),
                     }
                 }
                 command::Command::Prev => {
                     let ui_weak_clone = ui_weak.clone();
-                    match slint::invoke_from_event_loop(move || {
-                        if let Some(_ui) = ui_weak_clone.upgrade() {
-                            let attribute = _ui.global::<Attribute>();
-                            let music_info_list = attribute.get_music_list();
-                            let music_info = attribute.get_current_music_info();
-                            let idx = music_info.id - 1;
-                            if let Some(prev_music_info) = music_info_list.row_data(idx as usize) {
-                                attribute.set_current_music_info(prev_music_info.clone());
-                                attribute.set_playing(false);
-                                attribute.set_progress(0.0);
-                                _ui.invoke_play(PlayMode::Click, prev_music_info);
-                            }
-                        }
-                    }) {
-                        Ok(_) => {}
-                        Err(e) => error!("{}", e),
-                    }
+                    pick_music_info_playback(ui_weak_clone, PickMode::Prev);
                 }
                 command::Command::Next => {
+                    let ui_weak_clone = ui_weak.clone();
+                    pick_music_info_playback(ui_weak_clone, PickMode::Next);
+                }
+                command::Command::HopeRepeat(mode) => {
                     let ui_weak_clone = ui_weak.clone();
                     match slint::invoke_from_event_loop(move || {
                         if let Some(_ui) = ui_weak_clone.upgrade() {
                             let attribute = _ui.global::<Attribute>();
-                            let music_info_list = attribute.get_music_list();
-                            let music_info = attribute.get_current_music_info();
-                            let idx = music_info.id + 1;
-                            if let Some(next_music_info) = music_info_list.row_data(idx as usize) {
-                                attribute.set_current_music_info(next_music_info.clone());
-                                attribute.set_playing(false);
-                                attribute.set_progress(0.0);
-                                _ui.invoke_play(PlayMode::Click, next_music_info);
-                            }
+                            attribute.set_is_repeat_play(mode);
                         }
                     }) {
                         Ok(_) => {}
-                        Err(e) => error!("{}", e),
+                        Err(e) => error!("Dispatch command hope repeat play err: {}", e),
                     }
                 }
-                command::Command::Repeat => {}
-                command::Command::Shuffle => {}
+                command::Command::HopeShuffle(mode) => {
+                    let ui_weak_clone = ui_weak.clone();
+                    match slint::invoke_from_event_loop(move || {
+                        if let Some(_ui) = ui_weak_clone.upgrade() {
+                            let attribute = _ui.global::<Attribute>();
+                            attribute.set_is_shuffle_play(mode);
+                        }
+                    }) {
+                        Ok(_) => {}
+                        Err(e) => error!("Dispatch command hope shuffle play err: {}", e),
+                    }
+                }
+            }
+        }
+
+        enum PickMode {
+            Prev,
+            Next,
+        }
+
+        fn pick_music_info_playback(ui_weak: Weak<AppWindow>, pick_mode: PickMode) {
+            match slint::invoke_from_event_loop(move || {
+                if let Some(_ui) = ui_weak.upgrade() {
+                    let attribute = _ui.global::<Attribute>();
+                    let music_info_list = attribute.get_music_list();
+
+                    let len = music_info_list.iter().len() as i32;
+
+                    let index;
+                    match pick_mode {
+                        PickMode::Prev => {
+                            let music_info = attribute.get_current_music_info();
+                            index = music_info.id - 1;
+                        }
+                        PickMode::Next => {
+                            if attribute.get_is_shuffle_play() {
+                                index = rng().random_range(0..len);
+                            } else {
+                                let music_info = attribute.get_current_music_info();
+                                index = music_info.id + 1;
+                            }
+                        }
+                    }
+
+                    if let Some(pick_music_info) = music_info_list.row_data(index as usize) {
+                        attribute.set_current_music_info(pick_music_info.clone());
+                        attribute.set_playing(false);
+                        attribute.set_progress(0.0);
+                        _ui.invoke_playback(pick_music_info);
+                    } else {
+                        error!("Dispatch no find music info");
+                    }
+                }
+            }) {
+                Ok(_) => {}
+                Err(e) => error!("Dispatch play next err: {}", e),
             }
         }
     });

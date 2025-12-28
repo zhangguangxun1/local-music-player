@@ -2806,6 +2806,7 @@ dependencies = [
  "image",
  "lofty",
  "log",
+ "rand",
  "rfd",
  "rodio",
  "single-instance",

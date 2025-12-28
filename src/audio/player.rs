@@ -18,7 +18,7 @@ impl Player {
     }
 
     pub fn load(&mut self, file_path: &str) {
-        // 停止当前播放
+        // 停止当前播放并清空播放队列
         self.stop();
 
         // 创建新的stream和sink（只有第一次或需要重置时）
@@ -58,6 +58,14 @@ impl Player {
         }
     }
 
+    pub fn get_pos(&self) -> f32 {
+        if let Some(sink) = &self.sink {
+            sink.get_pos().as_secs_f32()
+        } else {
+            0.0
+        }
+    }
+
     pub fn seek(&self, duration: f32) {
         if duration <= 0.0 {
             return;
@@ -67,6 +75,14 @@ impl Player {
                 Ok(_) => (),
                 Err(e) => error!("Error try seek: {:?}", e),
             }
+        }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        if let Some(sink) = &self.sink {
+            sink.empty()
+        } else {
+            true
         }
     }
 

@@ -12,7 +12,7 @@ pub fn check_is_single_instance(ins_name: &str) -> bool {
             true
         }
         Err(e) => {
-            error!("{}", e);
+            error!("Init single instance err: {}", e);
             false
         }
     }

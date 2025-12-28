@@ -46,7 +46,7 @@ fn get_selection_type() -> Option<SelectionType> {
 
     let result = MessageDialog::new()
         .set_title("选择文件类型")
-        .set_description("")
+        .set_description("指定你要添加的内容")
         .set_buttons(MessageButtons::OkCancelCustom(
             folder.clone(),
             single_file.clone(),

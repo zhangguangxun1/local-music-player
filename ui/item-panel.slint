@@ -12,13 +12,13 @@ export component ItemPanel inherits Window {
     property <bool> is-empty: Attribute.current-cover-image.width == 0;
 
     // 乱序播放
-    callback shuffle-play();
+    callback hope-shuffle-play(bool);
     // 上一首播放
     callback play-prev();
     // 下一首播放
     callback play-next();
     // 列表重复播放
-    callback repeat-play();
+    callback hope-repeat-play(bool);
     // 当前播放
     callback current-play();
     // 当前暂停
@@ -129,7 +129,7 @@ export component ItemPanel inherits Window {
                                 height: 20px;
 
                                 clicked => {
-                                    root.shuffle-play();
+                                    root.hope-shuffle-play(!Attribute.is-shuffle-play);
                                 }
                             }
                         }
@@ -195,7 +195,7 @@ export component ItemPanel inherits Window {
                                 height: 20px;
 
                                 clicked => {
-                                    root.repeat-play();
+                                    root.hope-repeat-play(!Attribute.is-repeat-play);
                                 }
                             }
                         }

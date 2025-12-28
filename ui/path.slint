@@ -1,4 +1,5 @@
 import { Palette } from "std-widgets.slint";
+import { Attribute } from "global.slint";
 
 // 使用 Path 绘制 svg 图片
 // 点击播放
@@ -29,8 +30,8 @@ export component Play inherits Window {
 
             Close { }
 
-            stroke: Palette.accent-background;
-            stroke-width: root.width * 0.1;
+            stroke: Palette.control-foreground;
+            stroke-width: root.width * 0.2;
         }
     }
 }
@@ -70,8 +71,8 @@ export component Pause inherits Window {
 
             Close { }
 
-            stroke: Palette.accent-background;
-            stroke-width: root.width * 0.1;
+            stroke: Palette.control-foreground;
+            stroke-width: root.width * 0.2;
         }
     }
 }
@@ -128,7 +129,7 @@ export component Prev inherits Window {
 
             Close { }
 
-            stroke: Palette.accent-background;
+            stroke: Palette.control-foreground;
             stroke-width: root.width * 0.1;
         }
     }
@@ -174,7 +175,7 @@ export component Next inherits Window {
 
             Close { }
 
-            stroke: Palette.accent-background;
+            stroke: Palette.control-foreground;
             stroke-width: root.width * 0.1;
         }
     }
@@ -192,7 +193,7 @@ export component Repeat inherits Window {
             width: 100%;
             height: 100%;
             commands: "M 17 1 L 21 5 L 17 9 M 3 11 V 9 a 4 4 0 0 1 4 -4 H 21 M 7 23 L 3 19 L 7 15 M 21 13 V 15 a 4 4 0 0 1 -4 4 H 3";
-            stroke: Palette.accent-background;
+            stroke: Attribute.is-repeat-play ? Palette.accent-background : Palette.control-foreground;
             stroke-width: root.width * 0.1;
         }
     }
@@ -210,7 +211,7 @@ export component Shuffle inherits Window {
             width: 100%;
             height: 100%;
             commands: "M 26 4 L 31 9 L 26 14 M 26 28 L 31 23 L 26 18 M 31 9 L 23 9 L 9 23 L 0 23 M 31 23 L 23 23 L 9 9 L 0 9";
-            stroke: Palette.accent-background;
+            stroke: Attribute.is-shuffle-play ? Palette.accent-background : Palette.control-foreground;
             stroke-width: root.width * 0.1;
         }
     }
@@ -223,6 +224,6 @@ export component Cover inherits Window {
         height: 100%;
         commands: "M 77.445 22.709 c -0.62 -0.627 -1.283 -1.179 -1.916 -1.767 c -2.477 -2.237 -4.039 -3.481 -4.039 -3.481 l 0.015 0.169 c -7.429 -5.415 -16.853 -8.705 -26.758 -8.705 C 17.646 8.924 0 28.829 0 53.67 v 62.644 c 0 24.839 17.925 44.746 44.746 44.746 c 11.064 0 11.722 -5.77 17.898 -8.949 c 0 0 8.949 -5.322 8.949 8.949 V 277.4 h 26.848 v -53.695 c 9.885 0 17.898 -8.014 17.898 -17.898 v -98.442 C 116.339 66.732 90.414 34.851 77.445 22.709 Z M 175.756 172.316 c 3.294 8.913 3.227 15.592 3.227 15.592 v 17.898 c 0 9.885 8.014 17.898 17.899 17.898 V 277.4 h 26.848 v -53.695 c 9.885 0 17.898 -8.014 17.898 -17.898 v -17.898 c 0 0 0.011 -6.722 3.266 -15.606 c -10.715 4.249 -22.362 6.657 -34.589 6.657 C 198.093 178.959 186.46 176.555 175.756 172.316 Z M 210.301 8.923 c -41.99 0 -76.022 34.057 -76.022 76.061 s 34.032 76.061 76.022 76.061 c 41.989 0 76.022 -34.057 76.022 -76.061 S 252.291 8.923 210.301 8.923 Z";
         stroke: Palette.accent-background;
-        stroke-width: root.width * 0.1;
+        stroke-width: root.width * 0.05;
     }
 }

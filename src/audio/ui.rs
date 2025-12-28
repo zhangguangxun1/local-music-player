@@ -1,11 +1,11 @@
-use crate::AppWindow;
 use crate::manager::{command, dispatch};
+use crate::AppWindow;
 use log::error;
 
-pub fn play(ui: &AppWindow, dis: &dispatch::Dispatch) {
+pub fn playback(ui: &AppWindow, dis: &dispatch::Dispatch) {
     let ui_sender = dis.ui_sender.clone();
-    ui.on_play(move |mode, music_info| {
-        match ui_sender.send(command::Command::Play(mode, music_info)) {
+    ui.on_playback(move |music_info| {
+        match ui_sender.send(command::Command::Playback(music_info)) {
             Ok(_) => (),
             Err(e) => error!("Error sending play command: {:?}", e),
         }
@@ -14,12 +14,10 @@ pub fn play(ui: &AppWindow, dis: &dispatch::Dispatch) {
 
 pub fn current_play(ui: &AppWindow, dis: &dispatch::Dispatch) {
     let ui_sender = dis.ui_sender.clone();
-    ui.on_current_play(
-        move || match ui_sender.send(command::Command::PlayCurrent) {
-            Ok(_) => (),
-            Err(e) => error!("Error sending current play command: {:?}", e),
-        },
-    )
+    ui.on_current_play(move || match ui_sender.send(command::Command::Play) {
+        Ok(_) => (),
+        Err(e) => error!("Error sending current play command: {:?}", e),
+    })
 }
 
 pub fn current_pause(ui: &AppWindow, dis: &dispatch::Dispatch) {
@@ -44,7 +42,7 @@ pub fn play_prev(ui: &AppWindow, dis: &dispatch::Dispatch) {
     let ui_sender = dis.ui_sender.clone();
     ui.on_play_prev(move || match ui_sender.send(command::Command::Prev) {
         Ok(_) => (),
-        Err(e) => error!("Error sending play prve command: {:?}", e),
+        Err(e) => error!("Error sending play prev command: {:?}", e),
     })
 }
 
@@ -56,18 +54,22 @@ pub fn play_next(ui: &AppWindow, dis: &dispatch::Dispatch) {
     })
 }
 
-pub fn repeat_list(ui: &AppWindow, dis: &dispatch::Dispatch) {
+pub fn hope_repeat_play(ui: &AppWindow, dis: &dispatch::Dispatch) {
     let ui_sender = dis.ui_sender.clone();
-    ui.on_repeat_play(move || match ui_sender.send(command::Command::Repeat) {
-        Ok(_) => (),
-        Err(e) => error!("Error sending repeat command: {:?}", e),
-    })
+    ui.on_hope_repeat_play(
+        move |mode| match ui_sender.send(command::Command::HopeRepeat(mode)) {
+            Ok(_) => (),
+            Err(e) => error!("Error sending hope repeat command: {:?}", e),
+        },
+    )
 }
 
-pub fn shuffle_list(ui: &AppWindow, dis: &dispatch::Dispatch) {
+pub fn hope_shuffle_play(ui: &AppWindow, dis: &dispatch::Dispatch) {
     let ui_sender = dis.ui_sender.clone();
-    ui.on_shuffle_play(move || match ui_sender.send(command::Command::Shuffle) {
-        Ok(_) => (),
-        Err(e) => error!("Error sending shuffle command: {:?}", e),
-    })
+    ui.on_hope_shuffle_play(
+        move |mode| match ui_sender.send(command::Command::HopeShuffle(mode)) {
+            Ok(_) => (),
+            Err(e) => error!("Error sending hope shuffle command: {:?}", e),
+        },
+    )
 }

@@ -1,20 +1,20 @@
 import { ItemTitle } from "item-title.slint";
 import { ItemContent } from "item-content.slint";
 import { ItemPanel } from "item-panel.slint";
-import { PlayMode, MusicInfo } from "type.slint";
+import { MusicInfo } from "type.slint";
 
 // 歌曲列表主界面
 export component Items inherits Window {
     // 双击播放歌曲
-    callback play(PlayMode, MusicInfo);
+    callback playback(MusicInfo);
     // 乱序播放
-    callback shuffle-play();
+    callback hope-shuffle-play(bool);
     // 上一首播放
     callback play-prev();
     // 下一首播放
     callback play-next();
     // 列表重复播放
-    callback repeat-play();
+    callback hope-repeat-play(bool);
     // 当前播放
     callback current-play();
     // 当前暂停
@@ -32,8 +32,8 @@ export component Items inherits Window {
         ItemContent {
             width: 100%;
             height: 75%;
-            play(mode, music-info) => {
-                root.play(mode, music-info);
+            playback(music-info) => {
+                root.playback(music-info);
             }
         }
         // 播放控制区
@@ -41,8 +41,8 @@ export component Items inherits Window {
             width: 100%;
             height: 20%;
 
-            shuffle-play => {
-                root.shuffle-play();
+            hope-shuffle-play(mode-info) => {
+                root.hope-shuffle-play(mode-info);
             }
 
             play-prev => {
@@ -53,8 +53,8 @@ export component Items inherits Window {
                 root.play-next();
             }
 
-            repeat-play => {
-                root.repeat-play();
+            hope-repeat-play(mode-info) => {
+                root.hope-repeat-play(mode-info);
             }
 
             current-play => {
