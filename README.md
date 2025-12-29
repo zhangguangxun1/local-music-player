@@ -31,4 +31,23 @@ unsafe impl Send for Player {}
 unsafe impl Sync for Player {}
 ```
 
-同时默认的编译环境编译完毕后无法关联 Mac 系统上的中文字体
+### 中文渲染乱码
+
+Mac Inter x86_64 平台默认的 slint 渲染引擎无法关联系统内置的中文字体, 引入第三方字体又会造成软件包编译体积过大故不考虑
+
+开发中需要预览请在入口文件手动导入
+
+```slint
+import "/System/Library/Fonts/Hiragino Sans GB.ttc";
+import "/System/Library/Fonts/Supplemental/Songti.ttc";
+```
+
+指定 Mac inter x86_64 平台字体默认字体导入, 如果是 m1-... 等可能需要确认字体路径或者本身不存在这个编译问题
+
+其它平台就默认按编译器找到的中文字体即可
+
+Mac 核心中文字体 通常位于 `/System/Library/Fonts` 目录下面, 针对中文字体选择 `冬青黑体` 文件名 `Hiragino Sans GB.ttc` 引入字体名称 `Hiragino Sans GB`
+
+补充中文字体, 通常位于 `/System/Library/Fonts/Supplemental` 目录下面, 针对中文字体选择 `宋体-简` 文件名 `Songti.ttc` 引入字体名称 `Songti SC`
+
+如果某个平台版本这两个字体都不存在, 就需要人为编码支持了.

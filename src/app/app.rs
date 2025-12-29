@@ -3,7 +3,8 @@ use crate::load;
 use crate::manager::dispatch;
 use crate::{AppWindow, Attribute};
 use log::error;
-use slint::{ComponentHandle, Model, Timer, TimerMode};
+use slint::{ComponentHandle, Model, SharedString, Timer, TimerMode};
+use std::path::Path;
 use std::process;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
@@ -25,6 +26,37 @@ fn callback(ui: &AppWindow, d: &dispatch::Dispatch) {
 pub fn start() {
     match AppWindow::new() {
         Ok(ui) => {
+            // 处理字体, 目前我只使用 Debian13, Linux 应该无需关注该项
+            // 和 Mac OS 而且我的 Mac OS 还是 Inter x86_64 平台发现存在字体渲染问题,
+            // m1...x 暂时没有涉及故先不处理
+            #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
+            unsafe {
+                // 冬青黑体
+                let font_name = "Hiragino Sans GB.ttc";
+                let font_family_name = "Hiragino Sans GB";
+                let font_path = "/System/Library/Fonts";
+                std::env::set_var("SLINT_FONT_DIRECTORIES", font_path);
+                let attribute = ui.global::<Attribute>();
+                if Path::new(format!("{}/{}", font_path, font_name).as_str()).exists() {
+                    attribute.set_default_font_family(SharedString::from(font_family_name));
+                } else {
+                    // 宋体-简
+                    let font_name = "Songti.ttc";
+                    let font_family_name = "Songti SC";
+                    std::env::set_var(
+                        "SLINT_FONT_DIRECTORIES",
+                        format!("{}/Supplemental", font_path),
+                    );
+                    if Path::new(format!("{}/Supplemental/{}", font_path, font_name).as_str()).exists()
+                    {
+                        attribute.set_default_font_family(SharedString::from(font_family_name));
+                    } else {
+                        error!("Mac OS x86_64 platform default font is empty!");
+                    }
+                }
+            }
+            // 其它平台暂时不需要关注这块针对平台的处理
+
             // 初始化音频等设备驱动程序, 首次播放时实际执行初始化
             let player = Arc::new(Mutex::new(audio::player::Player::new()));
 

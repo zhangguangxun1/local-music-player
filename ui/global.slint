@@ -3,6 +3,9 @@ import { ItemTitleInfo, MusicInfo, LyricInfo } from "type.slint";
 // 管理程序主要变量, 避免从子组件中一直往上传递过多的属性和回调等信息
 export global Attribute {
     // 全局样式属性
+    // 系统字体指定, 针对 Mac Inter x86_64 平台默认的 slint 渲染引擎无法读取到中文字体的问题, 由后端根据平台特性制定字体
+    // 不要去打包字体, 字体文件一般都是超过 10m 比较大, 开发时针对字体预览问题需手动指定默认值, 比如 冬青黑体 Hiragino Sans GB
+    in property <string> default-font-family: "";
     // 字体加粗
     in property <int> default-font-weight: 800;
     // 字体颜色
