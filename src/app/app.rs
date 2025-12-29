@@ -26,7 +26,6 @@ pub fn start() {
     match AppWindow::new() {
         Ok(ui) => {
             // 初始化音频等设备驱动程序, 首次播放时实际执行初始化
-            // 这部分初始化方式 Mac 上编译不通过, 之前了解是 rodio 库对平台的支持还存在问题, Mac 上编译本身也有问题, 暂时不处理
             let player = Arc::new(Mutex::new(audio::player::Player::new()));
 
             // 初始化前端发送事件通道和后端接收通道

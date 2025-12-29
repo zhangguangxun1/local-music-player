@@ -32,8 +32,18 @@ export component Lyric inherits Window {
                         Text {
                             color: idx == Attribute.current-lyric-index ? blue : green;
                             font-size: idx == Attribute.current-lyric-index ? 16px : 12px;
+                            font-weight: idx == Attribute.current-lyric-index ? 500 : 400;
                             text: lyric-info.text;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
                         }
+                    }
+
+                    scrolled() => {
+                        debug("parent height: ", self.viewport-height);
+                        debug("window: ", root.height);
+                        debug("viewport-x: ", self.viewport-x);
+                        debug("viewport-y: ", self.viewport-y);
                     }
                 }
             }

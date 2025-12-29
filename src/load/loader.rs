@@ -139,7 +139,7 @@ fn get_audio_metadata_list() -> (String, Vec<AudioMetadata>) {
     (path, audio_metadata_list)
 }
 
-// 获取歌曲列表
+// 获取歌曲列表-暂时不考虑排序
 pub fn get_music_info_list() -> (String, Vec<MusicInfo>) {
     let (path, metadata_list) = get_audio_metadata_list();
     let mut music_info_list: Vec<MusicInfo> = Vec::new();

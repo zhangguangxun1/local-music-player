@@ -4,9 +4,9 @@ use crate::lyric::line;
 use crate::manager::command;
 use crate::{AppWindow, Attribute};
 use log::error;
-use rand::{rng, Rng};
+use rand::{Rng, rng};
 use slint::{ComponentHandle, Model, SharedString, Weak};
-use std::sync::{mpsc, Arc, Mutex};
+use std::sync::{Arc, Mutex, mpsc};
 use std::thread;
 
 pub struct Dispatch {
@@ -163,6 +163,7 @@ pub fn listen(
             Next,
         }
 
+        // 根据是否设置重复播放和乱序播放, 选择下一首要播放的歌
         fn pick_music_info_playback(ui_weak: Weak<AppWindow>, pick_mode: PickMode) {
             match slint::invoke_from_event_loop(move || {
                 if let Some(_ui) = ui_weak.upgrade() {
@@ -178,6 +179,7 @@ pub fn listen(
                             index = music_info.id - 1;
                         }
                         PickMode::Next => {
+                            // 优先处理乱序播放, 如果同时设置了列表重复依然按乱序播放处理
                             if attribute.get_is_shuffle_play() {
                                 index = rng().random_range(0..len);
                             } else {
