@@ -1,0 +1,111 @@
+import { Attribute } from "global.slint";
+import { Palette } from "std-widgets.slint";
+
+// 导入 svg 图片
+// 点击播放
+export component Play inherits Window {
+    // 点击回调
+    callback clicked();
+    TouchArea {
+        clicked => {
+            root.clicked();
+        }
+        Image {
+            width: 100%;
+            height: 100%;
+            source: @image-url("icons/play.svg");
+        }
+    }
+}
+
+// 点击暂停
+export component Pause inherits Window {
+    // 点击回调
+    callback clicked();
+    TouchArea {
+        clicked => {
+            root.clicked();
+        }
+        Image {
+            width: 100%;
+            height: 100%;
+            source: @image-url("icons/pause.svg");
+        }
+    }
+}
+
+// 上一首
+export component Prev inherits Window { 
+    // 点击回调
+    callback clicked();
+    TouchArea {
+        clicked => {
+            root.clicked();
+        }
+        Image {
+            width: 100%;
+            height: 100%;
+            source: @image-url("icons/backward.svg");
+        }
+    }
+}
+
+// 下一首
+export component Next inherits Window {
+    // 点击回调
+    callback clicked();
+    TouchArea {
+        clicked => {
+            root.clicked();
+        }
+        Image {
+            width: 100%;
+            height: 100%;
+            source: @image-url("icons/forward.svg");
+        }
+    }
+}
+
+// 重复列表
+export component Repeat inherits Window {
+    // 点击回调
+    callback clicked();
+    TouchArea {
+        clicked => {
+            root.clicked();
+        }
+        Image {
+            width: 100%;
+            height: 100%;
+            source: @image-url("icons/repeat.svg");
+            colorize: Attribute.is-repeat-play ? blue : Palette.control-foreground;
+        }
+    }
+}
+
+// 乱序播放
+export component Shuffle inherits Window {
+    // 点击回调
+    callback clicked();
+    TouchArea {
+        clicked => {
+            root.clicked();
+        }
+        Image {
+            width: 100%;
+            height: 100%;
+            source: @image-url("icons/shuffle.svg");
+            colorize: Attribute.is-shuffle-play ? blue : Palette.control-foreground;
+        }
+    }
+}
+
+// 封面为空时默认封面
+export component Cover inherits Window {
+    Image {
+        width: 100%;
+        height: 100%;
+        source: @image-url("icons/images.svg");
+        colorize: #00ffbf;
+    }
+}

@@ -1,8 +1,14 @@
 # Local music player
 
-其实好些语法都不太清楚, 还参考了这个项目 [zeedle](https://github.com/Jordan-Haidee/zeedle)
-
 我以为 [Slint](https://docs.slint.dev/latest/docs/slint/) 这种原生支持打包后文件会很小, 比如只有 5-6M, 实际上还是有 15M 左右, 并没有那么轻量
+
+## 引用
+
+其实好些语法都不太清楚, 还参考或者引用了这些项目或者资源:
+
+[zeedle](https://github.com/Jordan-Haidee/zeedle)
+
+[Font Awesome](https://fontawesome.com/)
 
 ## Debian 13
 

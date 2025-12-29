@@ -1,13 +1,11 @@
 use lofty::file::TaggedFileExt;
-use lofty::picture::PictureType;
 
+// 这部分代码从 zeedle 拷贝, 后续会将图片生成到播放目录中无需每次重新生成
 // 从歌曲文件中解析封面
 fn parse_album_cover(path: &str) -> Option<(Vec<u8>, u32, u32)> {
     if let Ok(tagged) = lofty::read_from_path(path)
         && let Some(tag) = tagged.primary_tag()
-        && let Some(picture) = tag.pictures().iter().find(|pic| {
-            pic.pic_type() == PictureType::CoverFront || pic.pic_type() == PictureType::CoverBack
-        })
+        && let Some(picture) = tag.pictures().first()
         && let Ok(img) = image::load_from_memory(picture.data())
     {
         let rgba = img.into_rgba8();

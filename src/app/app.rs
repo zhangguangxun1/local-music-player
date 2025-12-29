@@ -41,47 +41,52 @@ pub fn start() {
             // 计时器关联ui操作, 只能在主线程内执行
             let ui_weak = ui.as_weak();
             let timer = Timer::default();
-            timer.start(TimerMode::Repeated, Duration::from_millis(800), move || {
-                let ui_weak_clone = ui_weak.clone();
-                let _player = player.lock().unwrap();
+            timer.start(
+                TimerMode::Repeated,
+                Duration::from_secs_f32(1.5), // 实际上歌词稍微延迟也不影响太多, 定时稍微缓一些
+                move || {
+                    let ui_weak_clone = ui_weak.clone();
+                    let _player = player.lock().unwrap();
 
-                // 如果没有播放也不为空, 说明是暂停状态不处理
-                if !_player.is_empty() && !_player.is_playing() {
-                    return;
-                }
+                    // 如果没有播放也不为空, 说明是暂停状态不处理
+                    if !_player.is_empty() && !_player.is_playing() {
+                        return;
+                    }
 
-                if let Some(_ui) = ui_weak_clone.upgrade() {
-                    let attribute = _ui.global::<Attribute>();
+                    if let Some(_ui) = ui_weak_clone.upgrade() {
+                        let attribute = _ui.global::<Attribute>();
 
-                    // 歌曲正在播放则处理歌词
-                    if _player.is_playing() {
-                        let pos = _player.get_pos();
-                        attribute.set_progress(pos);
+                        // 歌曲正在播放则处理歌词
+                        if _player.is_playing() {
+                            let pos = _player.get_pos();
+                            attribute.set_progress(pos);
 
-                        let lyrics = attribute.get_current_lyric_info_list();
-                        let pos_millis: f32 = pos * 1000.0;
-                        if lyrics.iter().len() > 0 {
-                            // pos_millis 接近实际播放的时间
-                            // x.time 是实际对应歌词设定的时间, 有的可能本身就有稍快或者稍慢
-                            if let Some(mut _pos) = lyrics.iter().position(|x| x.time >= pos_millis)
-                            {
-                                // 本身是查找最接近当前时间的行, 故相当于快进了一步, 所以回退一步, 看起来往前遍历和往后遍历应该是差不多的, 后续在考虑优化
-                                if _pos > 0 {
-                                    _pos -= 1;
+                            let lyrics = attribute.get_current_lyric_info_list();
+                            let pos_millis: f32 = pos * 1000.0;
+                            if lyrics.iter().len() > 0 {
+                                // pos_millis 接近实际播放的时间
+                                // x.time 是实际对应歌词设定的时间, 有的可能本身就有稍快或者稍慢
+                                if let Some(mut _pos) =
+                                    lyrics.iter().position(|x| x.time >= pos_millis)
+                                {
+                                    // 本身是查找最接近当前时间的行, 故相当于快进了一步, 所以回退一步, 看起来往前遍历和往后遍历应该是差不多的, 后续在考虑优化
+                                    if _pos > 0 {
+                                        _pos -= 1;
+                                    }
+                                    attribute.set_current_lyric_index(_pos as i32);
                                 }
-                                attribute.set_current_lyric_index(_pos as i32);
+                            }
+                        }
+
+                        // 播放队列为空则检查是否需要播放后续歌曲
+                        if _player.is_empty() {
+                            if attribute.get_is_shuffle_play() || attribute.get_is_repeat_play() {
+                                _ui.invoke_play_next();
                             }
                         }
                     }
-
-                    // 播放队列为空则检查是否需要播放后续歌曲
-                    if _player.is_empty() {
-                        if attribute.get_is_shuffle_play() || attribute.get_is_repeat_play() {
-                            _ui.invoke_play_next();
-                        }
-                    }
-                }
-            });
+                },
+            );
 
             match ui.run() {
                 Ok(_) => {}

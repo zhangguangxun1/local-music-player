@@ -1,6 +1,6 @@
 import { ProgressIndicator, Slider } from "std-widgets.slint";
 import { Attribute, Util } from "global.slint";
-import { Play, Pause, Prev, Next, Repeat, Shuffle, Cover } from "path.slint";
+import { Play, Pause, Prev, Next, Repeat, Shuffle, Cover } from "panel.slint";
 
 // 歌曲播放面板
 export component ItemPanel inherits Window {
@@ -79,6 +79,8 @@ export component ItemPanel inherits Window {
                                 minimum: 0;
                                 maximum: Attribute.current-music-info.duration;
                                 value: root.current-progress;
+
+                                // 实际上进度条增加可以正常播放, 但是进度条变小无法直接跳跃播放, 暂时不处理
                                 released(value) => {
                                     root.change-progress(value);
                                 }
