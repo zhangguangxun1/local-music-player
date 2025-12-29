@@ -9,11 +9,11 @@ pub struct Player {
     _stream: Option<OutputStream>, // 需要保持stream存活
 }
 
-// 条件编译：只在 macOS 上编译, Mac 平台需要标识这两个不安全的实现, 否则编译器检查不通过
-#[cfg(target_os = "macos")]
+// 条件编译: 只在 macOS Inter x86_64 上编译, Mac 平台需要标识这两个不安全的实现, 否则编译器检查不通过
+#[cfg(all(target_os = "macos", target_arch = "x86_64"))]
 unsafe impl Send for Player {}
 
-#[cfg(target_os = "macos")]
+#[cfg(all(target_os = "macos", target_arch = "x86_64"))]
 unsafe impl Sync for Player {}
 
 impl Player {
