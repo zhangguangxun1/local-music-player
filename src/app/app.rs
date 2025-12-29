@@ -3,8 +3,7 @@ use crate::load;
 use crate::manager::dispatch;
 use crate::{AppWindow, Attribute};
 use log::error;
-use slint::{ComponentHandle, Model, SharedString, Timer, TimerMode};
-use std::path::Path;
+use slint::{ComponentHandle, Model, Timer, TimerMode};
 use std::process;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
@@ -31,6 +30,9 @@ pub fn start() {
             // m1...x 暂时没有涉及故先不处理
             #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
             unsafe {
+                use std::path::Path;
+                use slint::SharedString;
+
                 // 冬青黑体
                 let font_name = "Hiragino Sans GB.ttc";
                 let font_family_name = "Hiragino Sans GB";
