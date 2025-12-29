@@ -31,6 +31,17 @@ unsafe impl Send for Player {}
 unsafe impl Sync for Player {}
 ```
 
+### 开发
+
+Mac OS 上 slint 插件可能没有处理好平台兼容, 尤其是 Inter x86_64 这些老的苹果电脑, 需要自己手动安装 slint-lsp 来实时预览 slint 界面
+
+```
+cargo install slint-viewer
+cargo install slint-lsp
+```
+
+然后配置 IDE 实际去请求本地自己编译完成的 slint-lsp 程序
+
 ### 中文渲染乱码
 
 Mac Inter x86_64 平台默认的 slint 渲染引擎无法关联系统内置的中文字体, 引入第三方字体又会造成软件包编译体积过大故不考虑
