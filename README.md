@@ -18,6 +18,23 @@ libasound2-dev: 提供了 Rust 编译时需要的 C 语言头文件和底层接�
 
 pkg-config: Rust 的构建脚本（build.rs）需要这个工具来定位系统库的安装路径
 
+类似这样的错误
+
+```
+error: linker `cc` not found
+  |
+  = note: No such file or directory (os error 2)
+error: could not compile `quote` (build script) due to 1 previous error
+```
+
+系统缺少C编译器（如gcc），导致Rust项目无法找到链接器cc
+
+build-essential包 包含gcc、g++和make等必要工具，可解决链接器缺失问题
+
+```
+sudo apt install build-essential
+```
+
 其它系统根据编译报错情况酌情安装缺失的库, 比如 Fedora 缺失的是:
 
 Rust 在编译 alsa-sys 插件时需要连接到系统底层的音频接口（C 语言库）, alsa-lib-devel 包含了 Rust 编译过程中需要的头文件和 .pc 文件（pkg-config 配置文件）, 就需要安装
@@ -25,6 +42,8 @@ Rust 在编译 alsa-sys 插件时需要连接到系统底层的音频接口（C 
 ```
 sudo dnf install alsa-lib-devel
 ```
+
+每个平台的基础库名称都可能不一样, 如果遇到编译中途失败, 可以把错误信息直接复制给 Ai, 同时告诉他自己的系统一般都能给出缺失基础库的名称, 安装即可
 
 ## Mac
 
