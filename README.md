@@ -10,13 +10,21 @@
 
 [Font Awesome](https://fontawesome.com/)
 
-## Debian 13
+## Linux
 
-如果要在 Debian 13 系统下编译, rodio 需要依赖下面两个库:  
+如果要在 Debian 13 系统下编译, rodio 需要依赖下面两个库:
 
 libasound2-dev: 提供了 Rust 编译时需要的 C 语言头文件和底层接口，用于控制音频输出
 
 pkg-config: Rust 的构建脚本（build.rs）需要这个工具来定位系统库的安装路径
+
+其它系统根据编译报错情况酌情安装缺失的库, 比如 Fedora 缺失的是:
+
+Rust 在编译 alsa-sys 插件时需要连接到系统底层的音频接口（C 语言库）, alsa-lib-devel 包含了 Rust 编译过程中需要的头文件和 .pc 文件（pkg-config 配置文件）, 就需要安装
+
+```
+sudo dnf install alsa-lib-devel
+```
 
 ## Mac
 
