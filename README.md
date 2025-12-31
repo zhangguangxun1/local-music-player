@@ -12,6 +12,10 @@
 
 ## Linux
 
+常见的几个 Linux 发行版编译信息
+
+### Debian 13
+
 如果要在 Debian 13 系统下编译, rodio 需要依赖下面两个库:
 
 libasound2-dev: 提供了 Rust 编译时需要的 C 语言头文件和底层接口，用于控制音频输出
@@ -35,6 +39,10 @@ build-essential包 包含gcc、g++和make等必要工具，可解决链接器缺
 sudo apt install build-essential
 ```
 
+Debian 除了这么贵的显卡毫无用武之地感觉没太多别的毛病
+
+### Fedora 43
+
 其它系统根据编译报错情况酌情安装缺失的库, 比如 Fedora 缺失的是:
 
 Rust 在编译 alsa-sys 插件时需要连接到系统底层的音频接口（C 语言库）, alsa-lib-devel 包含了 Rust 编译过程中需要的头文件和 .pc 文件（pkg-config 配置文件）, 就需要安装
@@ -43,7 +51,33 @@ Rust 在编译 alsa-sys 插件时需要连接到系统底层的音频接口（C 
 sudo dnf install alsa-lib-devel
 ```
 
+感觉 Fedora bug 好多好多, 简直无法接受那种
+
+### Manjaro
+
+Manjaro 类似基础组件在 base-devel
+
+```
+sudo pacman -Sy base-devel
+```
+
+还可能有一些底层 Rust rfd 库的依赖是, 烦的抠脚, 每个系统都 "百花齐放" 的.
+
+```
+[2025-12-31T07:38:51Z ERROR rfd::backend::xdg_desktop_portal] Failed to open zenity dialog: No such file or directory (os error 2)
+```
+
+类似这种就需要安装 zenity
+
+```
+sudo pacman -Sy zenity
+```
+
 每个平台的基础库名称都可能不一样, 如果遇到编译中途失败, 可以把错误信息直接复制给 Ai, 同时告诉他自己的系统一般都能给出缺失基础库的名称, 安装即可
+
+Manjaro 也是毛病一大堆多的很
+
+总体上感觉 Debian 是最省心最干净的, 但是 Debian 驱动不了显卡, 总是总 软件渲染, 一台电脑一半的价钱都在显卡上, 居然用不上谁受得了啊
 
 ## Mac
 
