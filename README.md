@@ -84,7 +84,7 @@ Manjaro 也是毛病一大堆多的很, 控制台一直闪烁要瞎了
 目前 Mac 上编译部分 struct 在 Mac 环境提示 Send Sync 等实现缺失, 需要增加如下不安全的实现 
 
 ```
-// 条件编译: 只在 macOS Inter x86_64 上编译, Mac 平台需要标识这两个不安全的实现, 否则编译器检查不通过
+// 条件编译: 只在 macOS Intel x86_64 上编译, Mac 平台需要标识这两个不安全的实现, 否则编译器检查不通过
 #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
 unsafe impl Send for Player {}
 

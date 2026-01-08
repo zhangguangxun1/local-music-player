@@ -26,7 +26,7 @@ pub fn start() {
     match AppWindow::new() {
         Ok(ui) => {
             // 处理字体, 目前我只使用 Debian13, Linux 应该无需关注该项
-            // 和 Mac OS 而且我的 Mac OS 还是 Inter x86_64 平台发现存在字体渲染问题,
+            // 和 Mac OS 而且我的 Mac OS 还是 Intel x86_64 平台发现存在字体渲染问题,
             // m1...x 暂时没有涉及故先不处理
             #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
             unsafe {
