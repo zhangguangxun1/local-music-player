@@ -17,6 +17,8 @@ lto = true
 # 这缩短了编译时间, 但会阻止某些优化
 # Cargo.toml 中将其设置为 1 以允许最大尺寸缩减优化
 codegen-units = 1
+# 默认情况下，Rust 在发生 panic 时会保留调用栈信息以便回溯
+panic = "abort"
 
 [dependencies]
 lofty = "0.22.4"
