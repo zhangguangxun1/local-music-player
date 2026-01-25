@@ -123,3 +123,31 @@ Mac 核心中文字体 通常位于 `/System/Library/Fonts` 目录下面, 针对
 补充中文字体, 通常位于 `/System/Library/Fonts/Supplemental` 目录下面, 针对中文字体选择 `宋体-简` 文件名 `Songti.ttc` 引入字体名称 `Songti SC`
 
 如果某个平台版本这两个字体都不存在, 就需要人为编码支持了.
+
+## 歌词
+
+歌词目前使用 lrc 文件, 跟歌曲同级目录同名不同后缀即可. 见 [line.rs](src/lyric/line.rs) 歌曲名替换后缀为 lrc 后为歌词名
+
+```
+// 更简洁的方式：使用Path的方法
+fn replace_ext_to_lrc(file_path: &str) -> String {
+    Path::new(file_path)
+        .with_extension("lrc") // 直接替换后缀
+        .to_string_lossy()
+        .to_string()
+}
+
+// 将歌曲文件归一到歌词文件, 文件同名, 后缀为 .lrc 的为该歌曲的歌词文件
+fn get_lrc_file(file_path: &str) -> Option<String> {
+    if !file_exists(file_path) {
+        return None;
+    }
+
+    let lrc_file = replace_ext_to_lrc(file_path);
+    if file_exists(&lrc_file) {
+        Some(lrc_file)
+    } else {
+        None
+    }
+}
+```
