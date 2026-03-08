@@ -126,6 +126,8 @@ Mac 核心中文字体 通常位于 `/System/Library/Fonts` 目录下面, 针对
 
 ## 歌词
 
+目前下载无损音乐比较难, 可以尝试[无损音乐下载](https://flac.music.hi.cn/) 这个平台, 免费听歌只能这样了
+
 歌词目前使用 lrc 文件, 跟歌曲同级目录同名不同后缀即可. 见 [line.rs](src/lyric/line.rs) 歌曲名替换后缀为 lrc 后为歌词名
 
 ```
@@ -151,3 +153,11 @@ fn get_lrc_file(file_path: &str) -> Option<String> {
     }
 }
 ```
+
+## TODO
+
+1. 音乐目录首次选择后保存
+2. 集成 Flac 免费音乐搜索和下载
+3. 歌词美化
+
+暂时搁置后续慢慢补充, 不想做的复杂, 否则就直接去使用 Foobar2000 这类更方便了
