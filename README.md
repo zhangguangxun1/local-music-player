@@ -114,7 +114,7 @@ import "/System/Library/Fonts/Hiragino Sans GB.ttc";
 import "/System/Library/Fonts/Supplemental/Songti.ttc";
 ```
 
-指定 Mac inter x86_64 平台字体默认字体导入, 如果是 m1-... 等可能需要确认字体路径或者本身不存在这个编译问题
+指定 Mac intel x86_64 平台字体默认字体导入, 如果是 m1-... 等可能需要确认字体路径或者本身不存在这个编译问题
 
 其它平台就默认按编译器找到的中文字体即可
 
